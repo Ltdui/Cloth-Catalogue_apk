@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "My Fabric Collection"
+rootProject.name = "Ayush Textile"
 
 include(":app")

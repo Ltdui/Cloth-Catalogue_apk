@@ -9,7 +9,7 @@ object AppStrings {
     }
 
     private val englishMap = mapOf(
-        "app_name" to "My Fabric Collection",
+        "app_name" to "Ayush Textile",
         "home" to "Home",
         "collection" to "Collection",
         "add" to "Add",
@@ -93,7 +93,7 @@ object AppStrings {
     )
 
     private val bengaliMap = mapOf(
-        "app_name" to "My Fabric Collection",
+        "app_name" to "আয়ুষ টেক্সটাইল",
         "home" to "হোম",
         "collection" to "কালেকশন",
         "add" to "যোগ করুন",
