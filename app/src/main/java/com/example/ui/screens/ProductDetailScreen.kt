@@ -1,7 +1,6 @@
 package com.example.ui.screens
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,10 +15,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Checkroom
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Image
@@ -47,6 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -58,6 +60,7 @@ import coil.compose.AsyncImage
 import com.example.localization.AppStrings
 import com.example.model.Product
 import com.example.ui.components.ConfirmDeleteDialog
+import com.example.ui.components.ExpressiveBackgroundBlobs
 import com.example.ui.components.getLocalizedCategoryName
 import com.example.utils.CurrencyFormatter
 import com.example.utils.ImageUtils
@@ -112,162 +115,211 @@ fun ProductDetailScreen(
         )
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = AppStrings.get("product_details", currentLanguage), fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {
-                        val shareTemplate = AppStrings.get("share_product_template", currentLanguage)
-                        val priceFormatted = CurrencyFormatter.formatPrice(prod.price)
-                        val shareText = String.format(
-                            shareTemplate,
-                            prod.name,
-                            prod.code,
-                            priceFormatted,
-                            localizedCategory
+    Box(modifier = modifier.fillMaxSize()) {
+        ExpressiveBackgroundBlobs(alpha = 0.2f)
+
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            containerColor = Color.Transparent,
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = AppStrings.get("product_details", currentLanguage),
+                            fontWeight = FontWeight.ExtraBold
                         )
-
-                        val sendIntent = Intent(Intent.ACTION_SEND).apply {
-                            type = "text/plain"
-                            putExtra(Intent.EXTRA_SUBJECT, prod.name)
-                            putExtra(Intent.EXTRA_TEXT, shareText)
-
-                            // Attach image Uri if local file
-                            if (!prod.imagePath.isNull_or_empty() && prod.imagePath!!.startsWith("/")) {
-                                val file = File(prod.imagePath!!)
-                                if (file.exists()) {
-                                    val authority = "${context.packageName}.fileprovider"
-                                    val uri = FileProvider.getUriForFile(context, authority, file)
-                                    putExtra(Intent.EXTRA_STREAM, uri)
-                                    type = "image/*"
-                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                }
-                            }
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = onNavigateBack,
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                        ) {
+                            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
                         }
+                    },
+                    actions = {
+                        IconButton(
+                            onClick = {
+                                val shareTemplate = AppStrings.get("share_product_template", currentLanguage)
+                                val priceFormatted = CurrencyFormatter.formatPrice(prod.price)
+                                val shareText = String.format(
+                                    shareTemplate,
+                                    prod.name,
+                                    prod.code,
+                                    priceFormatted,
+                                    localizedCategory
+                                )
 
-                        context.startActivity(Intent.createChooser(sendIntent, AppStrings.get("share", currentLanguage)))
-                    }) {
-                        Icon(imageVector = Icons.Default.Share, contentDescription = "Share", tint = MaterialTheme.colorScheme.primary)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
+                                val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(Intent.EXTRA_SUBJECT, prod.name)
+                                    putExtra(Intent.EXTRA_TEXT, shareText)
+
+                                    if (!prod.imagePath.isNullOrEmpty() && prod.imagePath!!.startsWith("/")) {
+                                        val file = File(prod.imagePath!!)
+                                        if (file.exists()) {
+                                            val authority = "${context.packageName}.fileprovider"
+                                            val uri = FileProvider.getUriForFile(context, authority, file)
+                                            putExtra(Intent.EXTRA_STREAM, uri)
+                                            type = "image/*"
+                                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                        }
+                                    }
+                                }
+
+                                context.startActivity(Intent.createChooser(sendIntent, AppStrings.get("share", currentLanguage)))
+                            },
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primaryContainer)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = "Share",
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent
+                    )
                 )
-            )
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-        ) {
-            // Large Product Image
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1.2f)
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
-                contentAlignment = Alignment.Center
-            ) {
-                if (!prod.imagePath.isNull_or_empty()) {
-                    val imageModel = if (prod.imagePath!!.startsWith("/")) {
-                        File(prod.imagePath!!)
-                    } else if (prod.imagePath!!.startsWith("sample_pattern_")) {
-                        val idx = prod.imagePath!!.removePrefix("sample_pattern_").toIntOrNull() ?: 0
-                        ImageUtils.createSampleFabricBitmap(idx)
-                    } else {
-                        prod.imagePath
-                    }
-
-                    AsyncImage(
-                        model = imageModel,
-                        contentDescription = prod.name,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.Image,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                        modifier = Modifier.size(64.dp)
-                    )
-                }
-
-                // Category Floating Badge
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(16.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(MaterialTheme.colorScheme.primary)
-                        .padding(horizontal = 12.dp, vertical = 6.dp)
-                ) {
-                    Text(
-                        text = localizedCategory,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
             }
-
-            // Details Body
+        ) { innerPadding ->
             Column(
-                modifier = Modifier.padding(20.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp, vertical = 10.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Name & Price Header
-                Row(
+                // Large Hero Image Container
+                Card(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top
+                    shape = RoundedCornerShape(32.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = prod.name,
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "${AppStrings.get("product_code", currentLanguage)}: ${prod.code}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1.15f)
+                            .clip(RoundedCornerShape(32.dp))
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (!prod.imagePath.isNullOrEmpty()) {
+                            val imageModel = if (prod.imagePath!!.startsWith("/")) {
+                                File(prod.imagePath!!)
+                            } else if (prod.imagePath!!.startsWith("sample_pattern_")) {
+                                val idx = prod.imagePath!!.removePrefix("sample_pattern_").toIntOrNull() ?: 0
+                                ImageUtils.createSampleFabricBitmap(idx)
+                            } else {
+                                prod.imagePath
+                            }
 
-                    Text(
-                        text = CurrencyFormatter.formatPrice(prod.price),
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Black,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                            AsyncImage(
+                                model = imageModel,
+                                contentDescription = prod.name,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.Checkroom,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(64.dp)
+                            )
+                        }
+
+                        // Floating Category Badge
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .padding(16.dp)
+                                .clip(RoundedCornerShape(18.dp))
+                                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.95f))
+                                .padding(horizontal = 14.dp, vertical = 6.dp)
+                        ) {
+                            Text(
+                                text = localizedCategory,
+                                color = MaterialTheme.colorScheme.primary,
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                        }
+                    }
+                }
+
+                // Header Card: Name, SKU, Price
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(24.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(18.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = prod.name,
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "SKU: ${prod.code}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(18.dp))
+                                    .background(MaterialTheme.colorScheme.primaryContainer)
+                                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                            ) {
+                                Text(
+                                    text = CurrencyFormatter.formatPrice(prod.price),
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    fontWeight = FontWeight.Black,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        }
+                    }
                 }
 
                 // Description Card
                 if (prod.description.isNotEmpty()) {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
-                        shape = RoundedCornerShape(14.dp)
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
+                        shape = RoundedCornerShape(20.dp)
                     ) {
-                        Column(modifier = Modifier.padding(14.dp)) {
+                        Column(modifier = Modifier.padding(16.dp)) {
                             Text(
                                 text = AppStrings.get("description", currentLanguage),
-                                style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.ExtraBold,
                                 color = MaterialTheme.colorScheme.primary
                             )
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(6.dp))
                             Text(
                                 text = prod.description,
                                 style = MaterialTheme.typography.bodyMedium,
@@ -281,17 +333,17 @@ fun ProductDetailScreen(
                 if (prod.notes.isNotEmpty()) {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
-                        shape = RoundedCornerShape(14.dp)
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
+                        shape = RoundedCornerShape(20.dp)
                     ) {
-                        Column(modifier = Modifier.padding(14.dp)) {
+                        Column(modifier = Modifier.padding(16.dp)) {
                             Text(
                                 text = AppStrings.get("notes", currentLanguage),
-                                style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.ExtraBold,
                                 color = MaterialTheme.colorScheme.primary
                             )
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(6.dp))
                             Text(
                                 text = prod.notes,
                                 style = MaterialTheme.typography.bodyMedium,
@@ -304,8 +356,8 @@ fun ProductDetailScreen(
                 // Timestamps Card
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)),
-                    shape = RoundedCornerShape(14.dp)
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+                    shape = RoundedCornerShape(20.dp)
                 ) {
                     Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(
@@ -321,8 +373,6 @@ fun ProductDetailScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
-
                 // Action Buttons: Edit & Delete
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -332,36 +382,45 @@ fun ProductDetailScreen(
                         onClick = { onEditClick(prod.id) },
                         modifier = Modifier
                             .weight(1f)
-                            .height(52.dp)
+                            .height(54.dp)
                             .testTag("btn_detail_edit"),
-                        shape = RoundedCornerShape(14.dp)
+                        shape = RoundedCornerShape(27.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        )
                     ) {
                         Icon(imageVector = Icons.Default.Edit, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = AppStrings.get("edit", currentLanguage), fontWeight = FontWeight.Bold)
+                        Text(
+                            text = AppStrings.get("edit", currentLanguage),
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleMedium
+                        )
                     }
 
                     OutlinedButton(
                         onClick = { showDeleteDialog = true },
                         modifier = Modifier
                             .weight(1f)
-                            .height(52.dp)
+                            .height(54.dp)
                             .testTag("btn_detail_delete"),
-                        shape = RoundedCornerShape(14.dp),
+                        shape = RoundedCornerShape(27.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
                             contentColor = MaterialTheme.colorScheme.error
                         )
                     ) {
                         Icon(imageVector = Icons.Default.Delete, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = AppStrings.get("delete", currentLanguage), fontWeight = FontWeight.Bold)
+                        Text(
+                            text = AppStrings.get("delete", currentLanguage),
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleMedium
+                        )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(30.dp))
             }
         }
     }
 }
-
-private fun String?.isNull_or_empty(): Boolean = this == null || this.isEmpty()
