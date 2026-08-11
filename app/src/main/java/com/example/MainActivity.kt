@@ -70,7 +70,8 @@ class MainActivity : ComponentActivity() {
 
             FabricCollectionTheme(
                 accentColorTheme = settings.accentColor,
-                themeMode = settings.themeMode
+                themeMode = settings.themeMode,
+                useDynamicColor = settings.useDynamicColor
             ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),

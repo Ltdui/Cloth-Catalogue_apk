@@ -37,6 +37,7 @@ class FabricRepository(private val context: Context) {
         val themeName = prefs.getString("themeMode", ThemeMode.SYSTEM.name) ?: ThemeMode.SYSTEM.name
         val colorName = prefs.getString("accentColor", AccentColorTheme.TEAL.name) ?: AccentColorTheme.TEAL.name
         val sortName = prefs.getString("sortOption", SortOption.NEWEST.name) ?: SortOption.NEWEST.name
+        val useDynamicColor = prefs.getBoolean("useDynamicColor", true)
 
         val language = try { AppLanguage.valueOf(langName) } catch (e: Exception) { AppLanguage.ENGLISH }
         val themeMode = try { ThemeMode.valueOf(themeName) } catch (e: Exception) { ThemeMode.SYSTEM }
@@ -47,6 +48,7 @@ class FabricRepository(private val context: Context) {
             language = language,
             themeMode = themeMode,
             accentColor = accentColor,
+            useDynamicColor = useDynamicColor,
             sortOption = sortOption
         )
     }
@@ -64,6 +66,11 @@ class FabricRepository(private val context: Context) {
     suspend fun updateAccentColor(accentColor: AccentColorTheme) = withContext(Dispatchers.IO) {
         prefs.edit().putString("accentColor", accentColor.name).apply()
         _appSettings.value = _appSettings.value.copy(accentColor = accentColor)
+    }
+
+    suspend fun updateUseDynamicColor(useDynamicColor: Boolean) = withContext(Dispatchers.IO) {
+        prefs.edit().putBoolean("useDynamicColor", useDynamicColor).apply()
+        _appSettings.value = _appSettings.value.copy(useDynamicColor = useDynamicColor)
     }
 
     suspend fun updateSortOption(sortOption: SortOption) = withContext(Dispatchers.IO) {

@@ -28,6 +28,7 @@ data class AppSettings(
     val language: AppLanguage = AppLanguage.ENGLISH,
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val accentColor: AccentColorTheme = AccentColorTheme.TEAL,
+    val useDynamicColor: Boolean = true,
     val sortOption: SortOption = SortOption.NEWEST,
     val currencySymbol: String = "₹"
 )

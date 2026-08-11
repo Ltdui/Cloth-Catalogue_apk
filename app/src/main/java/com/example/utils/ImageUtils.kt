@@ -44,7 +44,11 @@ object ImageUtils {
     fun createCameraImageUri(context: Context): Pair<Uri, String>? {
         return try {
             val fileName = "fabric_cam_${System.currentTimeMillis()}.jpg"
-            val file = File(getImagesDir(context), fileName)
+            val imagesDir = getImagesDir(context)
+            val file = File(imagesDir, fileName)
+            if (!file.exists()) {
+                file.createNewFile()
+            }
             val authority = "${context.packageName}.fileprovider"
             val uri = FileProvider.getUriForFile(context, authority, file)
             Pair(uri, file.absolutePath)

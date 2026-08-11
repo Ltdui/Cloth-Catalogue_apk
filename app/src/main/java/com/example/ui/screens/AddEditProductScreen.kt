@@ -1,9 +1,11 @@
 package com.example.ui.screens
 
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -53,6 +55,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -96,7 +100,7 @@ fun AddEditProductScreen(
 
     var isCategoryDropdownExpanded by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
-    var tempCameraUri by remember { mutableStateOf<Pair<Uri, String>?>(null) }
+    var tempCameraPath by rememberSaveable { mutableStateOf<String?>(null) }
 
     // Load existing product if editing
     LaunchedEffect(productId) {
@@ -125,8 +129,48 @@ fun AddEditProductScreen(
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
     ) { success ->
-        if (success && tempCameraUri != null) {
-            imagePath = tempCameraUri?.second
+        if (success && !tempCameraPath.isNullOrEmpty()) {
+            imagePath = tempCameraPath
+        }
+    }
+
+    // Camera Permission Launcher
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            val cameraInfo = ImageUtils.createCameraImageUri(context)
+            if (cameraInfo != null) {
+                tempCameraPath = cameraInfo.second
+                cameraLauncher.launch(cameraInfo.first)
+            } else {
+                Toast.makeText(context, "Failed to create image file", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(
+                context,
+                AppStrings.get("camera_permission_required", currentLanguage),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    val launchCameraFlow = {
+        val hasPermission = ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (hasPermission) {
+            val cameraInfo = ImageUtils.createCameraImageUri(context)
+            if (cameraInfo != null) {
+                tempCameraPath = cameraInfo.second
+                cameraLauncher.launch(cameraInfo.first)
+            } else {
+                Toast.makeText(context, "Failed to create image file", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
         }
     }
 
@@ -207,7 +251,7 @@ fun AddEditProductScreen(
                     .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                if (!imagePath.isNull_or_empty()) {
+                if (!imagePath.isNullOrEmpty()) {
                     val imageModel = if (imagePath!!.startsWith("/")) {
                         File(imagePath!!)
                     } else if (imagePath!!.startsWith("sample_pattern_")) {
@@ -266,13 +310,7 @@ fun AddEditProductScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedButton(
-                    onClick = {
-                        val cameraInfo = ImageUtils.createCameraImageUri(context)
-                        if (cameraInfo != null) {
-                            tempCameraUri = cameraInfo
-                            cameraLauncher.launch(cameraInfo.first)
-                        }
-                    },
+                    onClick = { launchCameraFlow() },
                     modifier = Modifier
                         .weight(1f)
                         .testTag("btn_camera"),

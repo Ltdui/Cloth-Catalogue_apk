@@ -117,6 +117,12 @@ class FabricViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    fun updateUseDynamicColor(useDynamicColor: Boolean) {
+        viewModelScope.launch {
+            repository.updateUseDynamicColor(useDynamicColor)
+        }
+    }
+
     fun clearToastMessage() {
         _toastMessage.value = null
     }

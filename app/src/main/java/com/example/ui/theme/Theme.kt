@@ -1,8 +1,12 @@
 package com.example.ui.theme
 
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import com.example.model.AccentColorTheme
 import com.example.model.ThemeMode
 
@@ -10,15 +14,22 @@ import com.example.model.ThemeMode
 fun FabricCollectionTheme(
     accentColorTheme: AccentColorTheme = AccentColorTheme.TEAL,
     themeMode: ThemeMode = ThemeMode.SYSTEM,
+    useDynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
+    val context = LocalContext.current
     val darkTheme = when (themeMode) {
         ThemeMode.LIGHT -> false
         ThemeMode.DARK -> true
         ThemeMode.SYSTEM -> isSystemInDarkTheme()
     }
 
-    val colorScheme = createThemeColorScheme(accentColorTheme, darkTheme)
+    val colorScheme = when {
+        useDynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
+        else -> createThemeColorScheme(accentColorTheme, darkTheme)
+    }
 
     MaterialTheme(
         colorScheme = colorScheme,
