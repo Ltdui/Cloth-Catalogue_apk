@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:translateX="22"
+        android:translateY="22">
+        <!-- Fabric Roll SVG Silhouette -->
+        <path
+            android:fillColor="#38BDF8"
+            android:pathData="M12,8 C9.79,8 8,9.79 8,12 L8,52 C8,54.21 9.79,56 12,56 L52,56 C54.21,56 56,54.21 56,52 L56,12 C56,9.79 54.21,8 52,8 L12,8 Z M12,12 L52,12 L52,52 L12,52 L12,12 Z"/>
+        <path
+            android:fillColor="#F43F5E"
+            android:pathData="M16,16 L48,16 L48,24 L16,24 Z M16,28 L48,28 L48,36 L16,36 Z M16,40 L48,40 L48,48 L16,48 Z"/>
+        <path
+            android:fillColor="#FACC15"
+            android:pathData="M40,4 L44,4 L44,20 L40,20 Z M48,4 L52,4 L52,20 L48,20 Z"/>
+    </group>
+</vector>

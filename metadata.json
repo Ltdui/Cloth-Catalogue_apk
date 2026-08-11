@@ -1,0 +1,6 @@
+{
+  "name": "My Fabric Collection",
+  "description": "Mobile app for managing shop fabric and product catalog with search, custom categories, dynamic themes, and multi-language support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
