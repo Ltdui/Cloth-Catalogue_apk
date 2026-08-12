@@ -1,8 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:width="76dp"
-        android:height="76dp"
-        android:drawable="@drawable/ic_ayush_logo"
-        android:gravity="center" />
-</layer-list>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Grounding Material 3 Expressive Tonal Squircle Badge -->
+    <path
+        android:fillColor="#F0DFD9"
+        android:pathData="M 54,23
+                  C 70,23 83,36 83,52
+                  C 83,68 70,81 54,81
+                  C 38,81 25,68 25,52
+                  C 25,36 38,23 54,23 Z" />
+
+    <!-- Subtle Textile Weave Geometry Accent -->
+    <path
+        android:fillColor="#E3CFC8"
+        android:pathData="M 36,52
+                  C 36,42 44,34 54,34
+                  C 64,34 72,42 72,52
+                  C 72,62 64,70 54,70
+                  C 44,70 36,62 36,52 Z" />
+
+    <!-- ============================================================== -->
+    <!-- BOLD SIMPLIFIED "AT" TEXTILE MONOGRAM (DEEP BURGUNDY #6B0014)  -->
+    <!-- ============================================================== -->
+
+    <!-- 'A' Left Upward Fabric Ribbon Leg -->
+    <path
+        android:fillColor="#6B0014"
+        android:pathData="M 32,74
+                  L 48,34
+                  C 49.2,31 51.8,29 54.5,29
+                  C 57.2,29 59,30.8 59,33.5
+                  L 53.5,45
+                  L 42.5,74
+                  C 41.8,75.8 40,77 38,77
+                  C 35.2,77 33.2,75 32,74 Z" />
+
+    <!-- 'T' Top Bar & Right Stem (Interlocking Ribbon) -->
+    <path
+        android:fillColor="#7C0018"
+        android:pathData="M 45,29
+                  L 73,29
+                  C 75.2,29 77,30.8 77,33
+                  C 77,35.2 75.2,37 73,37
+                  L 65,37
+                  L 65,72
+                  C 65,74.8 62.8,77 60,77
+                  C 57.2,77 55,74.8 55,72
+                  L 55,37
+                  L 45,37
+                  C 43.5,37 42.5,35.8 42.5,34.5
+                  C 42.5,31.2 43.8,29 45,29 Z" />
+
+    <!-- 'A' Interlocking Fabric Crossbar Ribbon -->
+    <path
+        android:fillColor="#6B0014"
+        android:pathData="M 37,58
+                  C 37,55.8 38.8,54 41,54
+                  L 64,54
+                  C 66.2,54 68,55.8 68,58
+                  C 68,60.2 66.2,62 64,62
+                  L 41,62
+                  C 38.8,62 37,60.2 37,58 Z" />
+
+    <!-- Apex Fold Shadow Detail (Material 3 Tonal Depth) -->
+    <path
+        android:fillColor="#4A000D"
+        android:pathData="M 49,42.5 L 54.5,29 L 57.5,36 L 52,36 Z" />
+
+    <!-- Fold Crease Accent Line (Cream Textile Highlight) -->
+    <path
+        android:fillColor="#FFF8F5"
+        android:pathData="M 42,60.5
+                  L 46.5,55.5
+                  L 48.5,55.5
+                  L 44,60.5 Z" />
+
+</vector>

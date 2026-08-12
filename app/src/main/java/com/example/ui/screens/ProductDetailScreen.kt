@@ -121,8 +121,10 @@ fun ProductDetailScreen(
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             containerColor = Color.Transparent,
+            contentWindowInsets = androidx.compose.foundation.layout.WindowInsets(0, 0, 0, 0),
             topBar = {
                 TopAppBar(
+                    windowInsets = androidx.compose.foundation.layout.WindowInsets(0, 0, 0, 0),
                     title = {
                         Text(
                             text = AppStrings.get("product_details", currentLanguage),

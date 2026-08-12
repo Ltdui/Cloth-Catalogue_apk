@@ -70,6 +70,7 @@ fun CollectionScreen(
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             containerColor = androidx.compose.ui.graphics.Color.Transparent,
+            contentWindowInsets = androidx.compose.foundation.layout.WindowInsets(0, 0, 0, 0),
             floatingActionButton = {
                 ExtendedFloatingActionButton(
                     onClick = onAddProductClick,

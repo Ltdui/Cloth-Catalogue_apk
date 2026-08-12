@@ -140,6 +140,7 @@ fun CategoryManagementScreen(
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             containerColor = Color.Transparent,
+            contentWindowInsets = androidx.compose.foundation.layout.WindowInsets(0, 0, 0, 0),
             floatingActionButton = {
                 ExtendedFloatingActionButton(
                     onClick = {
