@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.localization.AppStrings
 import com.example.model.SortOption
+import com.example.ui.components.AyushTextileLogo
 import com.example.ui.components.CategoryFilterChips
 import com.example.ui.components.EmptyProductState
 import com.example.ui.components.ExpressiveBackgroundBlobs
@@ -82,7 +83,7 @@ fun HomeScreen(
     val currentSort by viewModel.sortOption.collectAsState()
 
     var showSortMenu by remember { mutableStateOf(false) }
-    var showShowcaseBanner by remember { mutableStateOf(true) }
+    var showShowcaseBanner by remember { mutableStateOf(false) }
 
     val categoryMap = remember(categories) {
         categories.associateBy { it.id }
@@ -121,124 +122,111 @@ fun HomeScreen(
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    // Header Area
-                    Row(
+                    // Unified Header Surface (Brand Logo + Actions + Search Bar)
+                    androidx.compose.material3.Surface(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 20.dp, vertical = 14.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                            .testTag("home_unified_header"),
+                        shape = RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        tonalElevation = 3.dp,
+                        shadowElevation = 2.dp
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier
-                                    .size(44.dp)
-                                    .clip(RoundedCornerShape(14.dp))
-                                    .background(MaterialTheme.colorScheme.primary),
-                                contentAlignment = Alignment.Center
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 18.dp, vertical = 12.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            // Top Row: Logo & Action Menu
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Checkroom,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimary,
-                                    modifier = Modifier.size(24.dp)
+                                AyushTextileLogo(
+                                    logoSize = 40.dp,
+                                    tintColor = MaterialTheme.colorScheme.primary
                                 )
-                            }
 
-                            Spacer(modifier = Modifier.width(12.dp))
-
-                            Column {
-                                Text(
-                                    text = AppStrings.get("app_name", currentLanguage),
-                                    style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.ExtraBold,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                                Text(
-                                    text = "Expressive Fabric Catalog",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            // Toggle Banner
-                            IconButton(
-                                onClick = { showShowcaseBanner = !showShowcaseBanner },
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .background(MaterialTheme.colorScheme.primaryContainer)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.AutoAwesome,
-                                    contentDescription = "Showcase",
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.width(8.dp))
-
-                            // Sort Button
-                            Box {
-                                IconButton(
-                                    onClick = { showSortMenu = true },
-                                    modifier = Modifier
-                                        .clip(CircleShape)
-                                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                                        .testTag("sort_button")
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Sort,
-                                        contentDescription = AppStrings.get("sort_by", currentLanguage),
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
-                                }
-
-                                DropdownMenu(
-                                    expanded = showSortMenu,
-                                    onDismissRequest = { showSortMenu = false }
-                                ) {
-                                    SortOption.values().forEach { option ->
-                                        val label = when (option) {
-                                            SortOption.NEWEST -> AppStrings.get("sort_newest", currentLanguage)
-                                            SortOption.OLDEST -> AppStrings.get("sort_oldest", currentLanguage)
-                                            SortOption.NAME_ASC -> AppStrings.get("sort_name_asc", currentLanguage)
-                                            SortOption.NAME_DESC -> AppStrings.get("sort_name_desc", currentLanguage)
-                                            SortOption.PRICE_LOW_HIGH -> AppStrings.get("sort_price_low_high", currentLanguage)
-                                            SortOption.PRICE_HIGH_LOW -> AppStrings.get("sort_price_high_low", currentLanguage)
-                                        }
-                                        DropdownMenuItem(
-                                            text = {
-                                                Text(
-                                                    text = label,
-                                                    fontWeight = if (option == currentSort) FontWeight.Bold else FontWeight.Normal,
-                                                    color = if (option == currentSort) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-                                                )
-                                            },
-                                            onClick = {
-                                                viewModel.updateSortOption(option)
-                                                showSortMenu = false
-                                            }
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    IconButton(
+                                        onClick = { showShowcaseBanner = !showShowcaseBanner },
+                                        modifier = Modifier
+                                            .size(38.dp)
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.primaryContainer)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.AutoAwesome,
+                                            contentDescription = "Showcase",
+                                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                            modifier = Modifier.size(18.dp)
                                         )
+                                    }
+
+                                    Spacer(modifier = Modifier.width(8.dp))
+
+                                    Box {
+                                        IconButton(
+                                            onClick = { showSortMenu = true },
+                                            modifier = Modifier
+                                                .size(38.dp)
+                                                .clip(CircleShape)
+                                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                                                .testTag("sort_button")
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Sort,
+                                                contentDescription = AppStrings.get("sort_by", currentLanguage),
+                                                tint = MaterialTheme.colorScheme.primary,
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                        }
+
+                                        DropdownMenu(
+                                            expanded = showSortMenu,
+                                            onDismissRequest = { showSortMenu = false }
+                                        ) {
+                                            SortOption.values().forEach { option ->
+                                                val label = when (option) {
+                                                    SortOption.NEWEST -> AppStrings.get("sort_newest", currentLanguage)
+                                                    SortOption.OLDEST -> AppStrings.get("sort_oldest", currentLanguage)
+                                                    SortOption.NAME_ASC -> AppStrings.get("sort_name_asc", currentLanguage)
+                                                    SortOption.NAME_DESC -> AppStrings.get("sort_name_desc", currentLanguage)
+                                                    SortOption.PRICE_LOW_HIGH -> AppStrings.get("sort_price_low_high", currentLanguage)
+                                                    SortOption.PRICE_HIGH_LOW -> AppStrings.get("sort_price_high_low", currentLanguage)
+                                                }
+                                                DropdownMenuItem(
+                                                    text = {
+                                                        Text(
+                                                            text = label,
+                                                            fontWeight = if (option == currentSort) FontWeight.Bold else FontWeight.Normal,
+                                                            color = if (option == currentSort) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                                                        )
+                                                    },
+                                                    onClick = {
+                                                        viewModel.updateSortOption(option)
+                                                        showSortMenu = false
+                                                    }
+                                                )
+                                            }
+                                        }
                                     }
                                 }
                             }
+
+                            // Search Bar logically grouped directly inside top surface
+                            FabricSearchBar(
+                                query = searchQuery,
+                                onQueryChange = { viewModel.updateSearchQuery(it) },
+                                placeholderText = AppStrings.get("search_placeholder", currentLanguage),
+                                modifier = Modifier.fillMaxWidth()
+                            )
                         }
                     }
 
-                    // Search Bar
-                    FabricSearchBar(
-                        query = searchQuery,
-                        onQueryChange = { viewModel.updateSearchQuery(it) },
-                        placeholderText = AppStrings.get("search_placeholder", currentLanguage),
-                        modifier = Modifier.padding(horizontal = 20.dp)
-                    )
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    // Optional Showcase Header
+                    // Optional Showcase Header (Collapsible)
                     AnimatedVisibility(
                         visible = showShowcaseBanner && searchQuery.isEmpty(),
                         enter = fadeIn() + expandVertically(),
@@ -247,103 +235,71 @@ fun HomeScreen(
                         ExpressiveShowcaseHeader(
                             currentLanguage = currentLanguage,
                             onExploreClick = { showShowcaseBanner = false },
-                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)
+                            modifier = Modifier.padding(horizontal = 18.dp, vertical = 8.dp)
                         )
                     }
 
-                    // Dashboard Summary Section
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // Compact Dashboard Summary Pill Strip
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 20.dp, vertical = 6.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            .padding(horizontal = 18.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        Card(
+                        androidx.compose.material3.Surface(
                             modifier = Modifier.weight(1f),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f)
-                            ),
-                            shape = RoundedCornerShape(22.dp)
+                            shape = RoundedCornerShape(16.dp),
+                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f)
                         ) {
                             Row(
-                                modifier = Modifier.padding(14.dp),
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(40.dp)
-                                        .clip(RoundedCornerShape(12.dp))
-                                        .background(MaterialTheme.colorScheme.primary),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Checkroom,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onPrimary,
-                                        modifier = Modifier.size(22.dp)
-                                    )
-                                }
-                                Spacer(modifier = Modifier.width(10.dp))
-                                Column {
-                                    Text(
-                                        text = "${products.size}",
-                                        style = MaterialTheme.typography.titleLarge,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                                    )
-                                    Text(
-                                        text = AppStrings.get("total_products", currentLanguage),
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
-                                    )
-                                }
+                                Icon(
+                                    imageVector = Icons.Default.Checkroom,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "${products.size} ${AppStrings.get("total_products", currentLanguage)}",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
                             }
                         }
 
-                        Card(
+                        androidx.compose.material3.Surface(
                             modifier = Modifier.weight(1f),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f)
-                            ),
-                            shape = RoundedCornerShape(22.dp)
+                            shape = RoundedCornerShape(16.dp),
+                            color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.55f)
                         ) {
                             Row(
-                                modifier = Modifier.padding(14.dp),
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(40.dp)
-                                        .clip(RoundedCornerShape(12.dp))
-                                        .background(MaterialTheme.colorScheme.secondary),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Category,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onSecondary,
-                                        modifier = Modifier.size(22.dp)
-                                    )
-                                }
-                                Spacer(modifier = Modifier.width(10.dp))
-                                Column {
-                                    Text(
-                                        text = "${categories.size}",
-                                        style = MaterialTheme.typography.titleLarge,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        color = MaterialTheme.colorScheme.onSecondaryContainer
-                                    )
-                                    Text(
-                                        text = AppStrings.get("total_categories", currentLanguage),
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
-                                    )
-                                }
+                                Icon(
+                                    imageVector = Icons.Default.Category,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.secondary,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "${categories.size} ${AppStrings.get("total_categories", currentLanguage)}",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
                             }
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     // Category Chips
                     CategoryFilterChips(

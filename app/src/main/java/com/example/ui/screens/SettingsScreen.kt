@@ -61,6 +61,7 @@ import com.example.localization.AppStrings
 import com.example.model.AccentColorTheme
 import com.example.model.AppLanguage
 import com.example.model.ThemeMode
+import com.example.ui.components.AyushTextileLogo
 import com.example.ui.components.ExpressiveBackgroundBlobs
 import com.example.ui.components.FullOnboardingDialog
 import com.example.viewmodel.FabricViewModel
@@ -481,24 +482,38 @@ fun SettingsScreen(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
                 ) {
                     Column(modifier = Modifier.padding(18.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(imageVector = Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                            Spacer(modifier = Modifier.width(8.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(imageVector = Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = AppStrings.get("about_app", currentLanguage),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                             Text(
-                                text = AppStrings.get("about_app", currentLanguage),
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
+                                text = "v1.0.0",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(14.dp))
 
-                        Text(
-                            text = "${AppStrings.get("app_name", currentLanguage)} v1.0.0",
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
+                        // Official Brand Identity Logo
+                        AyushTextileLogo(
+                            logoSize = 48.dp,
+                            tintColor = MaterialTheme.colorScheme.primary
                         )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
                         Text(
                             text = AppStrings.get("about_desc", currentLanguage),
                             style = MaterialTheme.typography.bodySmall,
